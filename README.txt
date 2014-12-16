@@ -24,7 +24,7 @@ To generate the coverage report
 2. Put your compiled source in the "bin" directory inside your source folder
 
 
-4. Run the report generation script by issuing the below command 
+3. Run the report generation script by issuing the below command 
    ./report.sh
 
-5. The generated HTML reports, will be saved inside the reports directory
+4. The generated HTML reports, will be saved inside the reports directory
