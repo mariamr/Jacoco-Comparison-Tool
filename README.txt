@@ -1,3 +1,5 @@
+# Jacoco Test Coverage Comparison Report
+
 This repository extends the test coverage report of Jacoco by creating a comparison report. The comparison report shows the differences and similarities 
 between the test coverage of two different sets of test cases.
 
