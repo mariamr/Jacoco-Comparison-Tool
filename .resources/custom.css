@@ -1,0 +1,45 @@
+pre.source span.nc,
+table.legend .nc {
+ background-color: #ffcccc;
+}
+
+
+pre.source span.ac,
+table.legend .ac {
+ background-color: #ccffcc;
+}
+
+pre.source span.bc,
+table.legend .bc {
+ background-color: #33cccc;
+}
+
+pre.source span.uc,
+table.legend .uc {
+ background-color: #6666ff;
+}
+
+
+pre.source span.apc,
+table.legend .apc {
+ background-color: #ffffcc;
+}
+
+pre.source span.bpc,
+table.legend .bpc {
+ background-color: #e6cc80;
+}
+
+pre.source span.upc,
+table.legend .upc {
+ background-color: #ff9900;
+}
+
+table.legend {
+ border-spacing: 5px;
+ border:0;
+}
+
+table.legend td{
+ padding: 2px 5px;
+}
