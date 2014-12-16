@@ -13,10 +13,10 @@ To generate the coverage report
    execfiles:  The path to your execution data files ex. jacoco1.exec
  
  
-  Below are the optional configurations. 
+   Below are the optional configurations. 
   
     packages:   The comma separated name of packages to be included in the report.
-	titles: 	The comma separated title of test suites, to be used in the coverage report.    
+    titles: 	The comma separated title of test suites, to be used in the coverage report.    
 
 2. Put your compiled source in the "bin" directory inside your source folder
 
