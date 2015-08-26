@@ -9,7 +9,7 @@ To genrate the coverage report follow the bellow steps:
 - Create a folder as your source folder.
 - Create a "bin" directory under your source folder, and put your compiled source (jar or class files) inside that "bin" directory.
 - Put your exec files under the source folder.
-- Edit the configuration in the report.conf file in the project root folder.
+- Edit the configuration in the report.conf file inside the project root folder.
     - *source*: The absolute path to your source folder.
     - *reports*: The absolute path to the directory where the generated report files will be copied to
     - *execfile[0]*: The path to your first intermediate data file ex. jacoco1.exec
