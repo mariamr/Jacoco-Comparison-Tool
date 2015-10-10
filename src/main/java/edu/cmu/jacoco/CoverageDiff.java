@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -49,36 +50,40 @@ public class CoverageDiff {
 
 	final static String TOTAL_LABEL = "Total Branch Coverage";
 
-	public CoverageDiff(final File projectDirectory, File reportDirectory, int numberOfExecFiles) {
+	public CoverageDiff(final File projectDirectory, File reportDirectory, int numberOfExecFiles) throws IOException {
 		this.title = projectDirectory.getName();
 
 		this.classesDirectory = new File(projectDirectory, "classes");
 		this.sourceDirectory = new File(projectDirectory, "src");
-		this.reportDirectory = reportDirectory;
-		prepareReportDirectory();
+	this.reportDirectory = reportDirectory;
+	prepareReportDirectory();
 
-		this.packageCoverage = new HashMap<>();
-		this.numberOfTestSuites = numberOfExecFiles;
-		this.totalCoverage = new Coverage[numberOfTestSuites + 1];
+	this.packageCoverage = new HashMap<>();
+	this.numberOfTestSuites = numberOfExecFiles;
+	this.totalCoverage = new Coverage[numberOfTestSuites + 1];
 
-		this.director = new CodeDirectorImpl(sourceDirectory, this.reportDirectory, new HTMLHighlighter());
+	this.director = new CodeDirectorImpl(sourceDirectory, this.reportDirectory, new HTMLHighlighter());
+    }
+
+    // visible for testing
+    void prepareReportDirectory() throws IOException {
+
+	if (!reportDirectory.exists()) {
+	    Files.createDirectories(Paths.get(reportDirectory.getPath()));
 	}
+	try {
 
-	private void prepareReportDirectory() {
+	    FileUtils.copyDirectory(new File(this.getClass().getClassLoader().getResource("htmlresources").toURI()),
+		    new File(reportDirectory, ".resources"));
 
-		try {
-			if (!reportDirectory.exists()) {
-				Files.createDirectories(Paths.get(reportDirectory.getPath()));
-			}
-
-			FileUtils.copyDirectory(new File(".resources"), new File(reportDirectory, ".resources"));
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
+	} catch (IOException e) {
+	    System.err.println(
+		    "can't copy html resources to reportDirectory. Code Highlight will not work \n" + e.getMessage());
+	} catch (URISyntaxException e) {
+	    System.err.println(
+		    "can't copy html resources to reportDirectory. Code Highlight will not work \n" + e.getMessage());
 	}
+    }
 
 	public void initWriter() throws IOException {
 		this.writer = new HTMLWriter(this.reportDirectory + "/index.html");
