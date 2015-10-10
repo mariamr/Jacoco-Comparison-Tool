@@ -15,7 +15,7 @@ IF NOT "%packages%"=="" SET package=--package %packages%
 IF NOT "%titles%"=="" SET title=--title %titles%
 
 
-echo 'mvn clean compile exec:java -Dexec.mainClass="edu.cmu.jacoco.CoverageDiff" -Dexec.args="--source %source% --report %reports% --exec %execfile[0]%,%execfile[1]% %package% %title%"'
-mvn clean compile exec:java -Dexec.mainClass="edu.cmu.jacoco.CoverageDiff" -Dexec.args="--source %source% --report %reports% --exec %execfile[0]%,%execfile[1]% %package% %title%"
+echo 'mvn clean compile exec:java -Dexec.mainClass="edu.cmu.jacoco.cli.JacocoComparisonTool" -Dexec.args="--source %source% --report %reports% --exec %execfile[0]%,%execfile[1]% %package% %title%"'
+mvn clean compile exec:java -Dexec.mainClass="edu.cmu.jacoco.cli.JacocoComparisonTool" -Dexec.args="--source %source% --report %reports% --exec %execfile[0]%,%execfile[1]% %package% %title%"
 
 

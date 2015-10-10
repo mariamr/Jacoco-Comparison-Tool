@@ -13,4 +13,4 @@ then
 fi
 
 
-mvn clean compile exec:java -Dexec.mainClass="edu.cmu.jacoco.CoverageDiff" -Dexec.args="--source $source --report $reports --exec ${execfile[0]},${execfile[1]} $package $title"
+mvn clean compile exec:java -Dexec.mainClass="edu.cmu.jacoco.cli.JacocoComparisonTool" -Dexec.args="--source $source --report $reports --exec ${execfile[0]},${execfile[1]} $package $title"
