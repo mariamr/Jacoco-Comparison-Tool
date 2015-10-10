@@ -36,7 +36,6 @@ public class CoverageDiff {
 	private final File classesDirectory;
 	private final File sourceDirectory;
 	private final File reportDirectory;
-	private File executionDataFile;
 
 	private ExecutionDataStore executionDataStore;
 	private SessionInfoStore sessionInfoStore;
@@ -263,9 +262,9 @@ public class CoverageDiff {
 		return coverageBuilder.getBundle(title);
 	}
 
-	private void loadExecutionData() throws IOException {
+	private void loadExecutionData(final File execDataFile) throws IOException {
 
-		final FileInputStream fis = new FileInputStream(executionDataFile);
+		final FileInputStream fis = new FileInputStream(execDataFile);
 		final ExecutionDataReader executionDataReader = new ExecutionDataReader(
 				fis);
 		executionDataStore = new ExecutionDataStore();
@@ -304,10 +303,9 @@ public class CoverageDiff {
 	    return bcl;
 	}
 
-	public IBundleCoverage loadAndAnalyze(File execDataFile) throws IOException {
+	public IBundleCoverage loadAndAnalyze(final File execDataFile) throws IOException {
 		System.out.println("load and analyze: " + execDataFile.getPath());
-		executionDataFile = execDataFile;
-		loadExecutionData();
+		loadExecutionData(execDataFile);
 		return analyzeStructure();
 
 	}
