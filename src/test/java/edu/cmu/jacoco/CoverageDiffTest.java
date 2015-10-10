@@ -17,7 +17,8 @@ public class CoverageDiffTest {
 
     @Test
     public void testPrepareReportDirectory() throws Exception {
-        CoverageDiff diff = new CoverageDiff(new File(""), new File("target/jacoco-test"), 2);
+        CoverageDiff diff = new CoverageDiff(new File("src/main/java"), new File("target/classes"),
+                new File("target/jacoco-test"), 2);
         diff.prepareReportDirectory();
         List<String> originalFileNames = new ArrayList<String>();
         DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get("src/main/resources/htmlresources"));

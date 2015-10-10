@@ -27,7 +27,7 @@ public class JacocoComparisonTool {
 	    return;
 
 	final String[] execDataFiles = getOptionValues("exec", ",");
-	final CoverageDiff s = new CoverageDiff(new File(getOptionValue("source")), new File(getOptionValue("report")),
+	final CoverageDiff s = new CoverageDiff(new File(getOptionValue("sourceFileDir")), new File(getOptionValue("classFileDir")), new File(getOptionValue("report")),
 		execDataFiles.length);
 
 	final List<IBundleCoverage> bcl = s.loadAndAnalyze(execDataFiles);
@@ -54,8 +54,10 @@ public class JacocoComparisonTool {
 	final Options options = new Options();
 	boolean valid = true;
 
-	options.addOption(OptionBuilder.withLongOpt("source")
-		.withDescription("The directory containing the SOURCE files").hasArg().create());
+	options.addOption(OptionBuilder.withLongOpt("sourceFileDir")
+		.withDescription("The directory containing the source files").hasArg().create());
+	options.addOption(OptionBuilder.withLongOpt("classFileDir")
+		.withDescription("The directory containing the class files").hasArg().create());
 	options.addOption(OptionBuilder.withLongOpt("report")
 		.withDescription("The directory that the generated REPORTs will be written to").hasArg().create());
 	options.addOption(OptionBuilder.withLongOpt("package")
@@ -71,8 +73,13 @@ public class JacocoComparisonTool {
 	    // parse the command line arguments
 	    line = parser.parse(options, args);
 
-	    if (!line.hasOption("source")) {
-		System.out.println("You need to specify the source directory");
+	    if (!line.hasOption("sourceFileDir")) {
+		System.out.println("You need to specify the sources directory");
+		valid = false;
+	    }
+
+	    if (!line.hasOption("classFileDir")) {
+		System.out.println("You need to specify the classes directory");
 		valid = false;
 	    }
 

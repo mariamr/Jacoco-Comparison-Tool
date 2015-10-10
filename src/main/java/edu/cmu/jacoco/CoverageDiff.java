@@ -34,7 +34,6 @@ public class CoverageDiff {
 	private final String title;
 
 	private final File classesDirectory;
-	private final File sourceDirectory;
 	private final File reportDirectory;
 
 	private ExecutionDataStore executionDataStore;
@@ -49,11 +48,11 @@ public class CoverageDiff {
 
 	final static String TOTAL_LABEL = "Total Branch Coverage";
 
-	public CoverageDiff(final File projectDirectory, File reportDirectory, int numberOfExecFiles) throws IOException {
-		this.title = projectDirectory.getName();
+    public CoverageDiff(final File sourceDirectory, final File classesDirectory, final File reportDirectory,
+	    final int numberOfExecFiles) throws IOException {
+	this.title = sourceDirectory.getName();
 
-		this.classesDirectory = new File(projectDirectory, "classes");
-		this.sourceDirectory = new File(projectDirectory, "src");
+	this.classesDirectory = classesDirectory;
 	this.reportDirectory = reportDirectory;
 	prepareReportDirectory();
 
