@@ -105,7 +105,7 @@ public class HTMLWriter implements Writer {
 	public void renderClassHeader(String packageName, String title, boolean different) {
 				
 		try {
-			title = title.replace(packageName, "").replace(".", "");
+			title = title.replace(packageName, "").replace(".java", "").replace(".", "");
 			String path = packageName.concat("/" + title + ".java.html");
 			
 			if (different) {

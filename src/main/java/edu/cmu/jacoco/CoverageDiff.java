@@ -25,6 +25,7 @@ import org.jacoco.core.analysis.CoverageBuilder;
 import org.jacoco.core.analysis.IBundleCoverage;
 import org.jacoco.core.analysis.IClassCoverage;
 import org.jacoco.core.analysis.IPackageCoverage;
+import org.jacoco.core.analysis.ISourceFileCoverage;
 import org.jacoco.core.data.ExecutionDataReader;
 import org.jacoco.core.data.ExecutionDataStore;
 import org.jacoco.core.data.SessionInfoStore;
@@ -50,7 +51,7 @@ public class CoverageDiff {
 	
 	private static int numberOfTestSuites;
 	
-	final static String TOTAL_LABEL = "Total Branch Coverage";
+	final static String TOTAL_LABEL = "Total Line Coverage";
 	private final static String ALL_PACKAGES = "all";
 
 	public CoverageDiff(final File projectDirectory, File reportDirectory/*, int numberOfTestSuites*/) {
@@ -112,7 +113,7 @@ public class CoverageDiff {
 		bundleCoverage = s.loadAndAnalyze(new File("./target/jacoco.exec"));		
 		bcl.add(bundleCoverage);
 		
-		s.calculateBranchCoverage(bcl);
+		s.calculateLineCoverage(bcl);
 		
 		s.setWriter(new HTMLWriter(s.reportDirectory + "/index.html"));
 		
@@ -269,21 +270,21 @@ public class CoverageDiff {
 		writer.renderClassFooter();	
 	}
 
-	private void calculateBranchCoverage(List<IBundleCoverage> bcl) {
+	private void calculateLineCoverage(List<IBundleCoverage> bcl) {
 		
 		Map<String, ArrayList<Coverage>> classCoverage;
 		
 		// Calculate the total branch coverage for each package and its classes
 		for (IBundleCoverage bc: bcl) {
-			System.out.println("calculate branch coverage " + bc.getName());
+			System.out.println("calculate line coverage " + bc.getName());
 			for (IPackageCoverage p : bc.getPackages()) {	
 				if (packageCoverage.get(p.getName()) != null) {
-					classCoverage = packageCoverage.get(p.getName()); 
+					classCoverage = packageCoverage.get(p.getName());
 				}
 				else {
 					classCoverage = new HashMap<>();
 				}
-				calculateBranchCoverage(p.getClasses(), classCoverage);	
+				calculateLineCoverage(p.getSourceFiles(), classCoverage);
 				packageCoverage.put(p.getName(), classCoverage);		 
 			 }
 			
@@ -306,14 +307,14 @@ public class CoverageDiff {
 	}
 
 
-	private void calculateBranchCoverage(Collection<IClassCoverage> classes, Map<String, ArrayList<Coverage>> classCoverage) {
+	private void calculateLineCoverage(Collection<ISourceFileCoverage> classes, Map<String, ArrayList<Coverage>> classCoverage) {
 	
 		Coverage coverage;
 		int covered = 0;
 		int total = 0;
 		
-		for (IClassCoverage c : classes) {
-			coverage = calculateBranchCoverage(c);
+		for (ISourceFileCoverage c : classes) {
+			coverage = calculateLineCoverage(c);
 			
 			if (classCoverage.get(c.getName()) == null) {
 				classCoverage.put(c.getName(), new ArrayList<Coverage>());
@@ -335,12 +336,12 @@ public class CoverageDiff {
 	}
 
 
-	private Coverage calculateBranchCoverage(IClassCoverage c) {
+	private Coverage calculateLineCoverage(ISourceFileCoverage c) {
 		
 		Coverage coverage = new Coverage();
 		
-		coverage.covered = c.getBranchCounter().getCoveredCount();
-		coverage.total = c.getBranchCounter().getTotalCount();
+		coverage.covered = c.getLineCounter().getCoveredCount();
+		coverage.total = c.getLineCounter().getTotalCount();
 		
 		return coverage;
 	}

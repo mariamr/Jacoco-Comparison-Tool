@@ -16,7 +16,7 @@ public interface CodeHighlighter {
 
 	public void renderFooter();
 
-	public void renderLine(String title, int lineNo, int aBranchStatus, int bBranchStatus, int uBranchStatus, int aLineStatus, int bLineStatus, int uLineStatus);
+	public int renderLine(String title, int lineNo, int aBranchStatus, int bBranchStatus, int uBranchStatus, int aLineStatus, int bLineStatus, int uLineStatus);
 
 	public void setClassName(String name);
 
