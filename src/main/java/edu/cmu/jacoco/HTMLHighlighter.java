@@ -140,13 +140,8 @@ public class HTMLHighlighter implements CodeHighlighter{
 	private void renderLegend() {
 		try {
 			target.write("<table class='legend'>");
-			target.write("<tr><td class='nc'>Not Covered</td>");
-			target.write("<td class='ac'>Covered by test suite 1</td>");
-			target.write("<td class='bc'>Covered by test suite 2</td>");
-			target.write("<td class='uc'>Covered by the union test suite</td>");
-			target.write("<td class='apc'>Partially Covered by test suite 1</td>");
-			target.write("<td class='bpc'>Partially Covered by test suite 2</td>");
-			target.write("<td class='upc'>Partially Covered by the union test suite</td></tr>");
+			target.write("<td class='bc'>Covered by prudoction traffic but not by test</td>");
+			target.write("<td class='bpc'>Partially Covered prudoction traffic but not by test</td>");
 			target.write("</table>");
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -165,9 +160,9 @@ public class HTMLHighlighter implements CodeHighlighter{
 
 
 	@Override
-	public void renderLine(String title, int lineNo, int aBranchStatus, int bBranchStatus, int uBranchStatus, int aLineStatus, int bLineStatus, int uLineStatus) {
+	public int renderLine(String title, int lineNo, int aBranchStatus, int bBranchStatus, int uBranchStatus, int aLineStatus, int bLineStatus, int uLineStatus) {
 		
-		String line, style; 
+		String line, style;
 		
 		try {
 			if ((line = source.readLine()) != null) {
@@ -179,17 +174,21 @@ public class HTMLHighlighter implements CodeHighlighter{
 					target.write(line);
 					target.write("\n");
 				}
-				else {
+				else if(style.equals("bc") || style.equals("bpc")) {
 					target.write(String.format("<span class='%s' id='L%d' title='%s'>", style, lineNo, title));
 					target.write(line);	
 					target.write("\n");	
 					target.write("</span>");
+					return 1;
+				} else {
+					target.write(line);
+					target.write("\n");
 				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}			
-		
+		return 0;
 	}
 	
 	private String getCoverageType(int aStatus, int bStatus, int uStatus) {

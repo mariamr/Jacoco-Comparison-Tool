@@ -1,6 +1,7 @@
 package edu.cmu.jacoco;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -12,11 +13,13 @@ import org.jacoco.core.analysis.IBundleCoverage;
 import org.jacoco.core.analysis.IClassCoverage;
 import org.jacoco.core.analysis.ICounter;
 import org.jacoco.core.analysis.IPackageCoverage;
+import org.jacoco.core.analysis.ISourceFileCoverage;
 
 
 public class CodeDirectorImpl implements CodeDirector{
 	
 	private CodeHighlighter writer;
+	private FileWriter fileWriter;
 	private File sourceDirectory;
 	private File outputDirectory;
 	
@@ -26,8 +29,12 @@ public class CodeDirectorImpl implements CodeDirector{
 		this.sourceDirectory = sourceDirectory;
 
 		this.outputDirectory = reportDirectory;
+		try {
+			this.fileWriter = new FileWriter(new File("summary.txt"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
-
 	
 	public void generateClassCoverageReport(List<IBundleCoverage> bcl) {
 		if (bcl == null) 
@@ -52,26 +59,30 @@ public class CodeDirectorImpl implements CodeDirector{
 		Iterator<IPackageCoverage> bcbi = bcb.getPackages().iterator();
 		Iterator<IPackageCoverage> bcui = bcu.getPackages().iterator();
 		
-		Collection<IClassCoverage> bcap, bcbp, bcup;
+		Collection<ISourceFileCoverage> bcap, bcbp, bcup;
 		IPackageCoverage p;
 		
 		while (bcai.hasNext() && bcbi.hasNext() && bcui.hasNext()) {
 			p = bcai.next();
+			bcap = p.getSourceFiles();
+			bcbp = bcbi.next().getSourceFiles();
+			bcup = bcui.next().getSourceFiles();
+			/*
 			bcap = p.getClasses();
 			bcbp = bcbi.next().getClasses();
 			bcup = bcui.next().getClasses();
-			
+			*/
 			generateClassCoverageReport(p.getName(), bcap, bcbp, bcup);
 				
 		}
 	}
 
 
-	private void generateClassCoverageReport(String pkg, Collection<IClassCoverage> bcac, Collection<IClassCoverage> bcbc, Collection<IClassCoverage> bcuc) {
+	private void generateClassCoverageReport(String pkg, Collection<ISourceFileCoverage> bcac, Collection<ISourceFileCoverage> bcbc, Collection<ISourceFileCoverage> bcuc) {
 
-		Iterator<IClassCoverage> bcai = bcac.iterator();
-		Iterator<IClassCoverage> bcbi = bcbc.iterator();
-		Iterator<IClassCoverage> bcui = bcuc.iterator();
+		Iterator<ISourceFileCoverage> bcai = bcac.iterator();
+		Iterator<ISourceFileCoverage> bcbi = bcbc.iterator();
+		Iterator<ISourceFileCoverage> bcui = bcuc.iterator();
 		
 		while (bcai.hasNext() && bcbi.hasNext() && bcui.hasNext()) {			
 			generateClassCoverageReport(pkg, bcai.next(), bcbi.next(), bcui.next());				
@@ -80,10 +91,10 @@ public class CodeDirectorImpl implements CodeDirector{
 	}
 
 
-	private void generateClassCoverageReport(String pkg, IClassCoverage bca, IClassCoverage bcb, IClassCoverage bcu) {
+	private void generateClassCoverageReport(String pkg, ISourceFileCoverage bca, ISourceFileCoverage bcb, ISourceFileCoverage bcu) {
 		
 		int lastLine = Math.max(bca.getLastLine(), bcb.getLastLine());
-		String className = bca.getName().concat(".java");
+		String className = pkg + "/" + bca.getName();
 		String toolTip;
 		
 		writer.setClassName(className.replaceAll("/", "."));
@@ -95,7 +106,8 @@ public class CodeDirectorImpl implements CodeDirector{
 		
 		writer.renderHeader();
 		writer.renderCodePrefix();
-		
+		int coverInb = 0;
+		int validLine = bcu.getLineCounter().getTotalCount();;
 		for (int counter = 1; counter <= lastLine; counter++) {
 			// If this is not a branch initialize the tool tip with the line coverage statistics
 			if (bca.getLine(counter).getBranchCounter().getStatus() == ICounter.EMPTY) {
@@ -105,7 +117,7 @@ public class CodeDirectorImpl implements CodeDirector{
 										  bcu.getLine(counter).getInstructionCounter().getCoveredCount(),
 										  bcu.getLine(counter).getInstructionCounter().getTotalCount());
 
-			}else {
+			} else {
 				toolTip = String.format("%s|%s|%s - Total: %s", 
 						  bca.getLine(counter).getBranchCounter().getCoveredCount(),
 						  bcb.getLine(counter).getBranchCounter().getCoveredCount(),
@@ -114,7 +126,7 @@ public class CodeDirectorImpl implements CodeDirector{
 				
 			}
 				
-			writer.renderLine(toolTip, 
+			coverInb += writer.renderLine(toolTip,
 							  counter,
 							  bca.getLine(counter).getBranchCounter().getStatus(),
 							  bcb.getLine(counter).getBranchCounter().getStatus(),
@@ -123,7 +135,14 @@ public class CodeDirectorImpl implements CodeDirector{
 							  bcb.getLine(counter).getStatus(),
 							  bcu.getLine(counter).getStatus());
 		}
-		
+		try{
+			fileWriter.append(pkg.replace("/", ".") + "," + className.replace(pkg + "/", "").replace("/", ".") + "," + coverInb + "," + validLine);
+			fileWriter.append("\n");
+			fileWriter.flush();
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+
 		writer.renderTrailingLines();
 		
 		writer.renderCodeSuffix();
